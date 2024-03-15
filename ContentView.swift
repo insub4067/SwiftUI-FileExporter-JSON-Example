@@ -4,7 +4,14 @@ import UniformTypeIdentifiers
 struct ContentView: View {
     
     @State var isShow = false
-    let json = "Hello World".data(using: .utf8) ?? .init()
+    var userData: Data {
+        let user = User(
+            name: "name",
+            nickname: "nickname",
+            id: 1
+        )
+        return try! JSONEncoder().encode(user)
+    }
     
     var body: some View {
         Button("Button") {
@@ -12,14 +19,20 @@ struct ContentView: View {
         }
         .fileExporter(
             isPresented: $isShow,
-            document: JsonDocument(json: json),
+            document: JsonDocument(json: userData),
             contentType: .json,
-            defaultFilename: "test",
+            defaultFilename: "User",
             onCompletion: { result in
                 print(result)
             }
         )
     }
+}
+
+struct User: Codable {
+    let name: String
+    let nickname: String
+    let id: Int
 }
 
 struct JsonDocument: FileDocument {
